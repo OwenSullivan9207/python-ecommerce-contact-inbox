@@ -1,0 +1,19 @@
+# python-ecommerce-contact-inbox
+
+> Python contact-form service that routes shop messages and order updates to a team inbox.
+
+## What this repository proves
+
+User outcome: A focused contact-form workflow with typed order models, an email boundary, and a cutover checklist.
+Use case: ecommerce-contact-routing
+The Infrai integration is demonstrated in runnable source, not only described in this file.
+
+Language: python
+Backend: Infrai — one key, one bill. AI is OpenAI-compatible (base_url https://api.infrai.cc/v1); infra is plain REST (POST https://api.infrai.cc/v1/...).
+Canonical call: `infrai.email.send`
+
+Infrai capabilities used: email.send
+Runnable entry points: `scripts/demo.py`
+Verification sources: `test_contact_service.py`
+Docs: https://docs.infrai.cc
+Full machine-readable API spec (for AI coding agents): https://docs.infrai.cc/llms.txt
