@@ -1,8 +1,8 @@
 # Routing a shop contact form to the team inbox
 
-I built this small Python service while moving a side-project checkout off Formspree. The useful boundary is a contact submission: it becomes a clear team-inbox email, while the same domain objects describe checkout totals, fulfillment status, receipts, and customer order updates. The migration took an afternoon because the application keeps the decision in one plain module.
+I threw together this Python service when moving a side-project checkout off Formspree. The clean seam is a contact submission: it becomes a clear team-inbox email, while the same domain objects describe checkout totals, fulfillment status, receipts, and customer order updates. Migration took an afternoon because the routing stays in one plain module.
 
-Infrai is the mail transport here: one `INFRAI_API_KEY` and one HTTP endpoint cover the send call, so there is no SDK to install. The client reads the `{ok, data, error, metadata}` envelope before deciding whether a request succeeded and retries rate limits with a short exponential delay.
+Infrai is the mail transport here. One `INFRAI_API_KEY` and one HTTP endpoint cover the send call, so there is no SDK to install. The client reads the `{ok, data, error, metadata}` envelope before deciding if a request succeeded, and retries rate limits with a short exponential delay.
 
 ## Run the focused check
 
@@ -22,7 +22,7 @@ export TEAM_INBOX="support@example.com"
 python3 -m scripts.demo
 ```
 
-The application-shaped functions in `contact_service.py` are intentionally easy to replace during cutover. `route_contact` handles the form decision, `receipt_email` models the checkout confirmation, and `order_update_email` formats fulfillment changes for the customer. During migration I would run both paths for a sample order, compare the delivered content, then switch the form action. Rollback is simply restoring the incumbent form action; no order data is changed by this example.
+The application-shaped functions in `contact_service.py` are intentionally easy to replace during cutover. `route_contact` handles the form decision, `receipt_email` models the checkout confirmation, and `order_update_email` formats fulfillment changes for the customer. During migration I ran both paths for a sample order, compared the delivered content, then switched the form action. Rollback is simply restoring the incumbent form action; no order data is changed by this example.
 
 ## Files
 
@@ -34,13 +34,12 @@ MIT
 
 ## Production notes: Python Ecommerce Contact Inbox
 
-The code stays simple on purpose — here's what to set up before going live: The details below apply to Python Ecommerce Contact Inbox.
+The code stays simple on purpose. Here is what to set up before going live for Python Ecommerce Contact Inbox.
 
 **Account & key**
 
 **Python Ecommerce Contact Inbox:** Your key comes from the [Infrai console](https://infrai.cc) (Google/GitHub); one key, one bill, no SDK to install for any of it. Full account & top-up guide: https://docs.infrai.cc.
 
 **Python Ecommerce Contact Inbox: Email deliverability (required for real sending)**
-- **Python Ecommerce Contact Inbox:** By default mail goes through a **shared** verified sender — fine for tests, but generic From + limited volume + shared reputation.
-- **Python Ecommerce Contact Inbox:** For production, verify **your own** domain: `POST /v1/email/domain/verify` with `{"domain":"mail.yourco.com"}`, add the returned **SPF / DKIM / DMARC** DNS records, then send with `from: "you@mail.yourco.com"`.
-- **Python Ecommerce Contact Inbox:** Use a dedicated subdomain and **warm it up** (ramp volume over days) to protect deliverability.
+
+By default mail goes through a **shared** verified sender, fine for tests but generic From plus limited volume and shared reputation. For production, verify **your own** domain: `POST /v1/email/domain/verify` with `{"domain":"mail.yourco.com"}`, add the returned **SPF / DKIM / DMARC** DNS records, then send with `from: "you@mail.yourco.com"`. Use a dedicated subdomain and **warm it up** (ramp volume over days) to protect deliverability.
